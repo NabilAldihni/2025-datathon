@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.db import init_db
 from app.oauth import router as oauth_router
-from app.jobs import router as jobs_router
+from app.gmail import router as gmail_router
 
 
 @asynccontextmanager
@@ -33,21 +33,9 @@ app.add_middleware(
 
 # Register all routers
 app.include_router(oauth_router)   # /auth/google/login + /auth/google/callback
-app.include_router(jobs_router)    # /api/discovery/start + /api/discovery/status
+app.include_router(gmail_router)    # /api/discovery/start
 
 
 @app.get("/", summary="Welcome")
 async def root():
     return {"message": "Hello from backend. Visit /docs for API UI."}
-
-@app.get("/get-analysis", summary="analyze Terms of Service")
-async def analyze_and_compare(tos: str):
-    '''
-    Analyzes the provided Terms of Service text and returns flagged sections.
-
-    :tos: Terms of Service text to analyze.
-    :return: A list of flagged sections with explanations.
-
-    <Author: Ahmad>
-    '''
-    return
