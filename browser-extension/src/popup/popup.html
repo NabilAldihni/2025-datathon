@@ -7,9 +7,18 @@
     body { font-family: Arial, sans-serif; min-width: 300px; padding: 10px; }
     h2 { font-size: 16px; margin: 8px 0 4px 0; }
     ul { padding-left: 20px; margin: 0 0 10px 0; }
-    li { margin-bottom: 4px; }
+    li { margin-bottom: 4px; cursor: default; }
+    li.clickable { color: #007bff; cursor: pointer; text-decoration: underline; }
     button { background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
     button:hover { background: #0056b3; }
+
+    /* Modal styles inside popup */
+    #essentialModal.tg-modal-hidden { display: none; }
+    #essentialModal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    #essentialModal .tg-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); }
+    #essentialModal .tg-modal { background: white; border-radius: 10px; width: 300px; max-width: 90%; padding: 10px; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    #essentialModal .tg-modal-header { font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    #essentialModal .tg-modal-header button { background: none; border: none; font-size: 18px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -20,6 +29,19 @@
   <ul id="cookiesList"><li>Loading...</li></ul>
 
   <button id="refreshBtn">Refresh Summary</button>
+
+  <!-- Essential Cookies Modal -->
+  <div id="essentialModal" class="tg-modal-hidden">
+    <div class="tg-modal-backdrop"></div>
+    <div class="tg-modal">
+      <div class="tg-modal-header">
+        <span>Essential Cookies</span>
+        <button id="closeEssentialModal">&times;</button>
+      </div>
+      <ul id="essentialCookiesList"></ul>
+    </div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

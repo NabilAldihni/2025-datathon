@@ -1,8 +1,10 @@
 function updateSummary() {
     const policiesList = document.getElementById("policiesList");
     const cookiesList = document.getElementById("cookiesList");
+    const essentialListEl = document.getElementById("essentialCookiesList");
     policiesList.innerHTML = "<li>Loading...</li>";
     cookiesList.innerHTML = "<li>Loading...</li>";
+    essentialListEl.innerHTML = "";
   
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       const activeTab = tabs[0];
@@ -33,17 +35,47 @@ function updateSummary() {
         if (cookies.length === 0) cookiesList.innerHTML = "<li>No cookies detected yet.</li>";
         else {
           cookiesList.innerHTML = "";
+          let essentialCookies = [];
+  
           cookies.forEach(c => {
-            const li = document.createElement("li");
-            li.innerText = `${c.name}: ${c.status}`; // rejected or essential
-            cookiesList.appendChild(li);
+            if (c.status === "essential") essentialCookies.push(c);
+            else {
+              const li = document.createElement("li");
+              li.innerText = `${c.name}: ${c.status}`; // rejected
+              cookiesList.appendChild(li);
+            }
           });
+  
+          if (essentialCookies.length > 0) {
+            const li = document.createElement("li");
+            li.innerText = `Essential Cookies (${essentialCookies.length})`;
+            li.classList.add("clickable");
+            li.onclick = () => showEssentialModal(essentialCookies);
+            cookiesList.appendChild(li);
+          }
         }
       });
     });
   }
   
-  // Refresh button
+  // ----------------------
+  // Modal functions
+  // ----------------------
+  function showEssentialModal(essentialCookies) {
+    const essentialListEl = document.getElementById("essentialCookiesList");
+    essentialListEl.innerHTML = "";
+    essentialCookies.forEach(c => {
+      const li = document.createElement("li");
+      li.innerText = c.name;
+      essentialListEl.appendChild(li);
+    });
+    document.getElementById("essentialModal").classList.remove("tg-modal-hidden");
+  }
+  
+  document.getElementById("closeEssentialModal").onclick = () => {
+    document.getElementById("essentialModal").classList.add("tg-modal-hidden");
+  };
+  
   document.getElementById("refreshBtn").addEventListener("click", updateSummary);
   updateSummary();
   
