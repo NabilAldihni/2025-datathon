@@ -1,6 +1,8 @@
 /****************************************************
- * content.js — Only show mock summary for actionable
- * privacy/TOS buttons nearby relevant text
+ * content.js — Trigger mock summary only for:
+ * - Visible actionable button near policy text
+ * OR
+ * - Text containing "agree"/"agreement" near policy keywords
  ****************************************************/
 
 let policyAlreadySummarized = false;
@@ -16,24 +18,34 @@ function isVisible(el) {
 }
 
 // ----------------------
+// Determine if text contains policy keywords and agreement keywords nearby
+// ----------------------
+function textIndicatesAgreement(el) {
+  const text = (el.innerText || "").toLowerCase();
+  const policyKeywords = ["privacy policy", "terms of service", "terms and conditions"];
+  const agreementKeywords = ["agree", "agreement"];
+  
+  return policyKeywords.some(pk => text.includes(pk)) &&
+         agreementKeywords.some(ak => text.includes(ak));
+}
+
+// ----------------------
 // Determine if element is an actionable consent banner
 // ----------------------
 function isConsentNearPolicyText(el) {
   if (!isVisible(el)) return false;
 
-  // Actionable buttons
-  const actionableKeywords = ["accept", "agree", "i consent", "continue", "reject"];
+  const actionableButtonKeywords = ["accept", "agree", "i consent", "continue", "reject"];
   const buttons = el.querySelectorAll("button, a");
+
   const hasActionableButton = Array.from(buttons).some(btn =>
-    actionableKeywords.some(k => (btn.innerText || "").toLowerCase().includes(k))
+    actionableButtonKeywords.some(k => (btn.innerText || "").toLowerCase().includes(k))
   );
 
-  if (!hasActionableButton) return false;
-
-  // Check nearby text for policy keywords
-  const policyKeywords = ["privacy policy", "terms of service", "terms and conditions"];
-  const text = (el.innerText || "").toLowerCase();
-  return policyKeywords.some(k => text.includes(k));
+  // Trigger if either:
+  // 1. Visible button exists with keyword
+  // 2. Text itself contains "agree"/"agreement" near policy keywords
+  return hasActionableButton || textIndicatesAgreement(el);
 }
 
 // ----------------------
@@ -50,7 +62,7 @@ function detectPolicyModal() {
 
       showModal("Policy Summary", "mock policy summary");
 
-      // Optionally log to backend (stubbed for now)
+      // Optionally log to backend
       try {
         chrome.runtime.sendMessage({
           type: "POLICY_FOUND",
@@ -76,7 +88,7 @@ function startDetection() {
 startDetection();
 
 // ----------------------
-// Stop interval
+// Stop detection interval
 // ----------------------
 function stopDetection() {
   if (policyInterval) clearInterval(policyInterval);
