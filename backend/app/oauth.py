@@ -48,5 +48,5 @@ async def oauth_callback(request: Request):
         upsert=True
     )
 
-    return RedirectResponse("http://localhost:3000/gmail-connected")
+    return RedirectResponse("http://localhost:3001/gmail-connected")
 

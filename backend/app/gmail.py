@@ -3,7 +3,6 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import BatchHttpRequest
 
-from app.db import db
 from app.util import extract_sender_domain, root_domain, strip_tld
 
 

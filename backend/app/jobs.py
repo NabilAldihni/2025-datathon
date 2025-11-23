@@ -2,7 +2,6 @@ from fastapi import APIRouter, BackgroundTasks
 from uuid import uuid4
 from datetime import datetime
 
-from app.db import db
 from app.gmail import run_discovery
 
 router = APIRouter()
