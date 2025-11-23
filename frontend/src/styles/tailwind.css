@@ -1,0 +1,303 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary Colors */
+    --color-primary: #2563EB; /* blue-600 - Trust-building blue */
+    --color-primary-foreground: #FFFFFF; /* white */
+    
+    /* Secondary Colors */
+    --color-secondary: #64748B; /* slate-500 - Professional slate gray */
+    --color-secondary-foreground: #FFFFFF; /* white */
+    
+    /* Accent Colors */
+    --color-accent: #F59E0B; /* amber-500 - Attention-drawing amber */
+    --color-accent-foreground: #FFFFFF; /* white */
+    
+    /* Background Colors */
+    --color-background: #F8FAFC; /* slate-50 - Clean off-white */
+    --color-foreground: #1E293B; /* slate-800 - Deep charcoal */
+    
+    /* Surface Colors */
+    --color-card: #FFFFFF; /* white - Pure white for cards */
+    --color-card-foreground: #1E293B; /* slate-800 */
+    --color-popover: #FFFFFF; /* white */
+    --color-popover-foreground: #1E293B; /* slate-800 */
+    
+    /* Muted Colors */
+    --color-muted: #F1F5F9; /* slate-100 */
+    --color-muted-foreground: #64748B; /* slate-500 - Medium gray */
+    
+    /* Border & Input */
+    --color-border: #E2E8F0; /* slate-200 - Minimal borders */
+    --color-input: #E2E8F0; /* slate-200 */
+    --color-ring: #2563EB; /* blue-600 */
+    
+    /* Status Colors */
+    --color-success: #059669; /* emerald-600 - Confident green */
+    --color-success-foreground: #FFFFFF; /* white */
+    
+    --color-warning: #D97706; /* amber-600 - Balanced orange */
+    --color-warning-foreground: #FFFFFF; /* white */
+    
+    --color-error: #DC2626; /* red-600 - Clear red */
+    --color-error-foreground: #FFFFFF; /* white */
+    
+    --color-destructive: #DC2626; /* red-600 */
+    --color-destructive-foreground: #FFFFFF; /* white */
+    
+    /* Typography */
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-caption: 'Inter', sans-serif;
+    --font-data: 'JetBrains Mono', monospace;
+    
+    /* Spacing & Layout */
+    --radius: 0.5rem;
+    --header-height: 64px;
+    --tab-height: 56px;
+  }
+
+  .dark {
+    --color-background: #0F172A; /* slate-900 */
+    --color-foreground: #F1F5F9; /* slate-100 */
+    
+    --color-card: #1E293B; /* slate-800 */
+    --color-card-foreground: #F1F5F9; /* slate-100 */
+    --color-popover: #1E293B; /* slate-800 */
+    --color-popover-foreground: #F1F5F9; /* slate-100 */
+    
+    --color-muted: #334155; /* slate-700 */
+    --color-muted-foreground: #94A3B8; /* slate-400 */
+    
+    --color-border: #334155; /* slate-700 */
+    --color-input: #334155; /* slate-700 */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer components {
+  /* Header Styles */
+  .privacy-header {
+    @apply fixed top-0 left-0 right-0 z-[100] bg-card border-b border-border;
+    height: var(--header-height);
+  }
+
+  .privacy-header-container {
+    @apply h-full flex items-center justify-between px-6;
+  }
+
+  .privacy-header-logo {
+    @apply flex items-center gap-3;
+  }
+.privacy-header-logo-icon  {
+    @apply w-10 h-10 rounded-lg flex items-center justify-center;
+    transition: all 200ms ease-out;
+  }
+.privacy-header-logo-icon:hover  {
+    
+  }
+
+  .privacy-header-logo-text {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .privacy-header-actions {
+    @apply flex items-center gap-4;
+  }
+
+  .privacy-header-sync-status {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-sm;
+    font-family: var(--font-data);
+  }
+
+  .privacy-header-sync-indicator {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .privacy-header-sync-indicator.synced {
+    @apply bg-success;
+  }
+
+  .privacy-header-sync-indicator.syncing {
+    @apply bg-warning animate-pulse;
+  }
+
+  .privacy-header-sync-indicator.error {
+    @apply bg-error;
+  }
+
+  /* Tab Navigation Styles */
+  .privacy-tabs {
+    @apply sticky bg-background border-b border-border z-[90];
+    top: var(--header-height);
+    height: var(--tab-height);
+  }
+
+  .privacy-tabs-container {
+    @apply h-full flex items-center px-6;
+  }
+
+  .privacy-tabs-list {
+    @apply flex items-center gap-1;
+  }
+.privacy-tab  {
+    @apply relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200;
+    @apply text-muted-foreground hover:text-foreground;
+  }
+.privacy-tab.active  {
+    @apply text-primary;
+  }
+
+  .privacy-tab-indicator {
+    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full;
+    @apply opacity-0 transition-opacity duration-200;
+  }
+
+  .privacy-tab.active .privacy-tab-indicator {
+    @apply opacity-100;
+  }
+.privacy-tab-badge  {
+    @apply ml-1 px-1.5 py-0.5 rounded-full text-xs font-medium;
+    @apply text-error;
+    font-family: var(--font-data);
+  }
+
+  /* Main Content Layout */
+  .main-content {
+    @apply pt-[calc(var(--header-height)+var(--tab-height)+1.5rem)] px-6 pb-6;
+    min-height: calc(100vh - var(--header-height) - var(--tab-height));
+  }
+
+  /* Alert Notification Styles */
+  .privacy-alert-container {
+    @apply fixed z-[110] pointer-events-none;
+    top: calc(var(--header-height) + 1rem);
+    right: 1rem;
+    max-width: 420px;
+  }
+
+  .privacy-alert {
+    @apply pointer-events-auto mb-3 p-4 rounded-lg shadow-lg border;
+    @apply bg-card border-border;
+    animation: slideInRight 300ms ease-out;
+  }
+.privacy-alert.success  {
+    
+  }
+.privacy-alert.warning  {
+    
+  }
+.privacy-alert.error  {
+    
+  }
+
+  .privacy-alert-header {
+    @apply flex items-start justify-between gap-3 mb-2;
+  }
+
+  .privacy-alert-title {
+    @apply flex items-center gap-2 font-medium text-sm;
+  }
+
+  .privacy-alert-body {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .privacy-alert-timestamp {
+    @apply mt-2 text-xs text-muted-foreground;
+    font-family: var(--font-data);
+  }
+
+  /* Mobile Bottom Tab Bar */
+  @media (max-width: 768px) {
+    .privacy-tabs {
+      @apply fixed bottom-0 left-0 right-0 top-auto border-t border-b-0;
+      height: var(--tab-height);
+    }
+
+    .privacy-tabs-container {
+      @apply justify-around px-2;
+    }
+
+    .privacy-tabs-list {
+      @apply w-full justify-around gap-0;
+    }
+
+    .privacy-tab {
+      @apply flex-col gap-1 px-3 py-2 flex-1;
+    }
+
+    .privacy-tab-label {
+      @apply text-xs;
+    }
+
+    .privacy-tab-indicator {
+      @apply top-0 bottom-auto;
+    }
+
+    .main-content {
+      @apply pt-[calc(var(--header-height)+1.5rem)] pb-[calc(var(--tab-height)+1.5rem)];
+    }
+.privacy-alert-container  {
+      @apply max-w-none;
+      width: calc(100% - 2rem);
+    }
+  }
+
+  /* Animations */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Utility Classes */
+  .privacy-card {
+    @apply bg-card rounded-lg border border-border p-6;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .privacy-card-elevated {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .privacy-risk-low {
+    @apply text-success;
+  }
+
+  .privacy-risk-medium {
+    @apply text-warning;
+  }
+
+  .privacy-risk-high {
+    @apply text-error;
+  }
+
+  .privacy-data-text {
+    font-family: var(--font-data);
+  }
+}
