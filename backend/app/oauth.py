@@ -7,7 +7,7 @@ from app.db import db
 router = APIRouter()
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
-REDIRECT_URI = "http://localhost:8000/gmail/oauth/callback"
+REDIRECT_URI = "http://localhost:3001/oauth/callback"
 
 def get_flow():
     return Flow.from_client_secrets_file(

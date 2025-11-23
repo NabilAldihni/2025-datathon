@@ -1,10 +1,10 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 
-mongo = None
 db = None
 
-def init_db():
-    global mongo, db
-    mongo = MongoClient("mongodb://localhost:27017")
-    db = mongo["aegis_db"]
+async def init_db():
+    global db
+    client = AsyncIOMotorClient("mongodb://localhost:27017")
+    db = client["aegis"]
+    print("DB initialized:", db)
 
