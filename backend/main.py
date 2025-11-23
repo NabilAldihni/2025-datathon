@@ -9,7 +9,7 @@ from app.jobs import router as jobs_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Starting API...")
-    init_db()
+    app.state.db = init_db()
     yield
     print("Shutting down API...")
 
@@ -33,5 +33,16 @@ app.include_router(jobs_router)
 
 @app.get("/")
 async def root():
-    return {"message": "API Online"}
+    return {"message": "Hello from backend! Visit /docs for the OpenAPI UI."}
 
+@app.get("/get-analysis", summary="analyze Terms of Service")
+async def analyze_and_compare(tos: str):
+    '''
+    Analyzes the provided Terms of Service text and returns flagged sections.
+
+    :tos: Terms of Service text to analyze.
+    :return: A list of flagged sections with explanations.
+
+    <Author: Ahmad>
+    '''
+    return

@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 from google_auth_oauthlib.flow import Flow
-
-from app.db import db
-
 router = APIRouter()
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
@@ -44,6 +41,7 @@ async def oauth_callback(request: Request):
         "scopes": creds.scopes,
     }
 
+    db = request.app.state.db
     db.tokens.update_one(
         {"name": "gmail"},
         {"$set": token_data},
