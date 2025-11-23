@@ -9,11 +9,8 @@ from app.jobs import router as jobs_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Starting 2025 Datathon API...")
-
-    # Initialize Mongo
-    await init_db()
-
+    print("Starting API...")
+    app.state.db = init_db()
     yield
 
     print("Shutting down 2025 Datathon API...")
@@ -43,3 +40,14 @@ app.include_router(jobs_router)    # /api/discovery/start + /api/discovery/statu
 async def root():
     return {"message": "Hello from backend. Visit /docs for API UI."}
 
+@app.get("/get-analysis", summary="analyze Terms of Service")
+async def analyze_and_compare(tos: str):
+    '''
+    Analyzes the provided Terms of Service text and returns flagged sections.
+
+    :tos: Terms of Service text to analyze.
+    :return: A list of flagged sections with explanations.
+
+    <Author: Ahmad>
+    '''
+    return

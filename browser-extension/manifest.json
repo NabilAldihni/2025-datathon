@@ -1,10 +1,23 @@
 {
-  "name": "Aegis Extension",
-  "description": "Base Level Extension",
-  "version": "1.0",
-  "manifest_version": 3,
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "extension.png"
+    "manifest_version": 3,
+    "name": "Aegis Privacy",
+    "version": "1.0",
+    "description": "Summarizes Terms of Service and manages cookie consent automatically.",
+    "permissions": ["storage", "activeTab", "scripting"],
+    "host_permissions": ["<all_urls>"],
+    "background": {
+      "service_worker": "src/background.js",
+      "type": "module"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["src/content.js"]
+      }
+    ],
+    "action": {
+      "default_popup": "src/popup/popup.html",
+      "default_icon": "assets/icon.png"
+    }
   }
-}
+  
