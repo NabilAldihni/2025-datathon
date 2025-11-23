@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from './AppIcon';
 import Button from './ui/Button';
+import logo from '@/assets/icon.png';
 
 const PrivacyHeader = () => {
   const navigate = useNavigate();
@@ -35,9 +36,9 @@ const PrivacyHeader = () => {
       <div className="privacy-header-container">
         <div className="privacy-header-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
           <div className="privacy-header-logo-icon">
-            <Icon name="Shield" size={24} color="var(--color-primary)" />
+            <img src={logo} alt="Logo" />
           </div>
-          <span className="privacy-header-logo-text">Privacy Guardian</span>
+          <span className="privacy-header-logo-text">Aegis</span>
         </div>
 
         <div className="privacy-header-actions">
