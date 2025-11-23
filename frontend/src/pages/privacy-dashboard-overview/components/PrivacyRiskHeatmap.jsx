@@ -5,9 +5,9 @@ const PrivacyRiskHeatmap = ({ services, onServiceClick }) => {
   const [hoveredService, setHoveredService] = useState(null);
 
   const getRiskColor = (riskLevel) => {
-    if (riskLevel >= 80) return 'bg-error/20 border-error hover:bg-error/30';
-    if (riskLevel >= 50) return 'bg-warning/20 border-warning hover:bg-warning/30';
-    return 'bg-success/20 border-success hover:bg-success/30';
+    if (riskLevel >= 80) return 'bg-error/20 border-error hover:bg-error hover:text-white';
+    if (riskLevel >= 50) return 'bg-warning/20 border-warning hover:bg-warning hover:text-white';
+    return 'bg-success/20 border-success hover:bg-success hover:text-white';
   };
 
   const getRiskSize = (dataExposure) => {
@@ -44,7 +44,7 @@ const PrivacyRiskHeatmap = ({ services, onServiceClick }) => {
             onMouseEnter={() => setHoveredService(service?.id)}
             onMouseLeave={() => setHoveredService(null)}
           >
-            <div className="flex flex-col h-full justify-between">
+            <div className={`flex flex-col h-full justify-between transition-opacity duration-200 ${hoveredService === service?.id ? 'opacity-0' : 'opacity-100'}`}>
               <div className="flex items-start justify-between">
                 <Icon name={service?.icon} size={24} />
                 <span className="text-xs font-medium privacy-data-text">
@@ -61,20 +61,20 @@ const PrivacyRiskHeatmap = ({ services, onServiceClick }) => {
             </div>
 
             {hoveredService === service?.id && (
-              <div className="absolute inset-0 bg-card/95 rounded-lg p-3 flex flex-col justify-center border-2 border-primary">
-                <p className="text-xs font-medium mb-2">{service?.name}</p>
+              <div className="absolute inset-0 bg-card/95 rounded-lg p-3 flex flex-col justify-center">
+                <p className="text-xs font-medium mb-2 text-white">{service?.name}</p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Risk Score:</span>
-                    <span className="font-medium">{service?.riskScore}%</span>
+                    <span className="text-white/80">Risk Score:</span>
+                    <span className="font-medium text-white">{service?.riskScore}%</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Violations:</span>
-                    <span className="font-medium">{service?.violations}</span>
+                    <span className="text-white/80">Violations:</span>
+                    <span className="font-medium text-white">{service?.violations}</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Last Updated:</span>
-                    <span className="font-medium">{service?.lastUpdate}</span>
+                    <span className="text-white/80">Last Updated:</span>
+                    <span className="font-medium text-white">{service?.lastUpdate}</span>
                   </div>
                 </div>
               </div>
