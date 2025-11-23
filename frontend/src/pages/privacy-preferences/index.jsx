@@ -3,7 +3,6 @@ import PrivacyHeader from '../../components/PrivacyHeader';
 import PrivacyTabs from '../../components/PrivacyTabs';
 import PrivacyAlertNotification from '../../components/PrivacyAlertNotification';
 import PrivacyPhilosophyPanel from './components/PrivacyPhilosophyPanel';
-import ServiceConsentMatrix from './components/ServiceConsentMatrix';
 import ImpactVisualization from './components/ImpactVisualization';
 import ChangeHistoryTimeline from './components/ChangeHistoryTimeline';
 import AutoSyncIndicator from './components/AutoSyncIndicator';
@@ -243,59 +242,6 @@ const PrivacyPreferences = () => {
     }, 1000);
   };
 
-  const handleConsentChange = (serviceId, categoryId, newValue) => {
-    setServices(prev => prev?.map(service => {
-      if (service?.id === serviceId) {
-        return {
-          ...service,
-          categories: service?.categories?.map(cat => 
-            cat?.id === categoryId ? { ...cat, enabled: newValue } : cat
-          )
-        };
-      }
-      return service;
-    }));
-
-    setSyncStatus('pending');
-    setPendingChanges(prev => prev + 1);
-
-    setAlerts(prev => [...prev, {
-      id: Date.now(),
-      type: 'success',
-      title: 'Consent Updated',
-      message: `${categoryId} consent changed for ${serviceId}`,
-      timestamp: new Date()
-    }]);
-
-    setTimeout(() => {
-      setSyncStatus('syncing');
-      setTimeout(() => {
-        setSyncStatus('synced');
-        setLastSync(new Date());
-        setPendingChanges(0);
-
-        const service = services?.find(s => s?.id === serviceId);
-        const newChange = {
-          id: `ch${Date.now()}`,
-          type: 'consent',
-          title: `${service?.name} ${categoryId} ${newValue ? 'Enabled' : 'Disabled'}`,
-          description: `${newValue ? 'Enabled' : 'Disabled'} ${categoryId} for ${service?.name}`,
-          timestamp: new Date(),
-          impact: newValue ? 'negative' : 'positive',
-          details: {
-            servicesAffected: 1,
-            privacyImpact: (newValue ? '-' : '+') + Math.floor(Math.random() * 5 + 3) + ' points'
-          },
-          outcome: {
-            success: true,
-            message: 'Change applied successfully'
-          }
-        };
-        setChangeHistory(prev => [newChange, ...prev]);
-      }, 1500);
-    }, 500);
-  };
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setAlerts(prev => prev?.slice(0, 3));
@@ -324,19 +270,11 @@ const PrivacyPreferences = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-12">
               <PrivacyPhilosophyPanel
                 preferences={userPreferences}
                 onPreferenceChange={handlePreferenceChange}
                 impactMetrics={impactMetrics}
-              />
-            </div>
-
-            <div className="lg:col-span-8">
-              <ServiceConsentMatrix
-                services={services}
-                onConsentChange={handleConsentChange}
-                userPreferences={userPreferences}
               />
             </div>
           </div>

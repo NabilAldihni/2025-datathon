@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import PrivacyHeader from '../../components/PrivacyHeader';
-import PrivacyTabs from '../../components/PrivacyTabs';
-import PrivacyAlertNotification from '../../components/PrivacyAlertNotification';
-import ServiceConnectionStatus from '../../components/ServiceConnectionStatus';
+import PrivacyHeader from '@/components/PrivacyHeader';
+import PrivacyTabs from '@/components/PrivacyTabs';
+import PrivacyAlertNotification from '@/components/PrivacyAlertNotification';
+import ServiceConnectionStatus from '@/components/ServiceConnectionStatus';
 import PrivacyScoreCard from './components/PrivacyScoreCard';
 import PrivacyRiskHeatmap from './components/PrivacyRiskHeatmap';
 import RecentAlertsPanel from './components/RecentAlertsPanel';
 import ServiceGridCard from './components/ServiceGridCard';
 import DashboardControls from './components/DashboardControls';
+import facebookLogo from '@/assets/facebook.png';
+import googleLogo from '@/assets/google.png';
+import instagramLogo from '@/assets/instagram.svg';
+import twitterLogo from '@/assets/twitter.png';
+import linkedinLogo from '@/assets/linkedin.png';
+import amazonLogo from '@/assets/amazon.png';
+import netflixLogo from '@/assets/netflix.png';
+import spotifyLogo from '@/assets/spotify.png';
 
 const PrivacyDashboardOverview = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -55,7 +63,7 @@ const PrivacyDashboardOverview = () => {
   {
     id: 1,
     name: "Facebook",
-    icon: "Facebook",
+    icon: facebookLogo,
     riskScore: 85,
     dataExposure: "high",
     dataPoints: 342,
@@ -65,7 +73,7 @@ const PrivacyDashboardOverview = () => {
   {
     id: 2,
     name: "Google",
-    icon: "Chrome",
+    icon: googleLogo,
     riskScore: 68,
     dataExposure: "medium",
     dataPoints: 256,
@@ -75,7 +83,7 @@ const PrivacyDashboardOverview = () => {
   {
     id: 3,
     name: "Instagram",
-    icon: "Instagram",
+    icon: instagramLogo,
     riskScore: 82,
     dataExposure: "high",
     dataPoints: 298,
@@ -182,7 +190,7 @@ const PrivacyDashboardOverview = () => {
     id: 1,
     name: "Facebook",
     category: "Social Media",
-    logo: "https://images.unsplash.com/photo-1655199798186-23a85b12c4e4",
+    logo: facebookLogo,
     logoAlt: "Facebook logo with white F letter on blue square background representing social media platform",
     privacyScore: 15,
     complianceStatus: "non-compliant",
@@ -194,7 +202,7 @@ const PrivacyDashboardOverview = () => {
     id: 2,
     name: "Google",
     category: "Email & Cloud",
-    logo: "https://images.unsplash.com/photo-1553895501-af9e282e7fc1",
+    logo: googleLogo,
     logoAlt: "Google logo with colorful G letter on white background representing search and cloud services",
     privacyScore: 32,
     complianceStatus: "warning",
@@ -206,7 +214,7 @@ const PrivacyDashboardOverview = () => {
     id: 3,
     name: "Instagram",
     category: "Social Media",
-    logo: "https://img.rocket.new/generatedImages/rocket_gen_img_1390331bb-1763924326819.png",
+    logo: instagramLogo,
     logoAlt: "Instagram logo with gradient camera icon on white background representing photo sharing platform",
     privacyScore: 18,
     complianceStatus: "non-compliant",
@@ -218,7 +226,7 @@ const PrivacyDashboardOverview = () => {
     id: 4,
     name: "Twitter",
     category: "Social Media",
-    logo: "https://images.unsplash.com/photo-1667235326880-324e1a51d40b",
+    logo: twitterLogo,
     logoAlt: "Twitter logo with blue bird icon on white background representing microblogging platform",
     privacyScore: 25,
     complianceStatus: "warning",
@@ -230,7 +238,7 @@ const PrivacyDashboardOverview = () => {
     id: 5,
     name: "LinkedIn",
     category: "Professional Network",
-    logo: "https://images.unsplash.com/photo-1704382002666-5dc4fbb522c0",
+    logo: linkedinLogo,
     logoAlt: "LinkedIn logo with white in letters on blue square background representing professional networking",
     privacyScore: 55,
     complianceStatus: "compliant",
@@ -242,7 +250,7 @@ const PrivacyDashboardOverview = () => {
     id: 6,
     name: "Amazon",
     category: "E-commerce",
-    logo: "https://img.rocket.new/generatedImages/rocket_gen_img_16982e3d2-1763924326531.png",
+    logo: amazonLogo,
     logoAlt: "Amazon logo with black text and orange arrow on white background representing online shopping",
     privacyScore: 28,
     complianceStatus: "warning",
@@ -254,7 +262,7 @@ const PrivacyDashboardOverview = () => {
     id: 7,
     name: "Netflix",
     category: "Entertainment",
-    logo: "https://images.unsplash.com/photo-1662338035252-74cdac76bd2a",
+    logo: netflixLogo,
     logoAlt: "Netflix logo with red N letter on black background representing streaming service",
     privacyScore: 62,
     complianceStatus: "compliant",
@@ -266,7 +274,7 @@ const PrivacyDashboardOverview = () => {
     id: 8,
     name: "Spotify",
     category: "Music Streaming",
-    logo: "https://images.unsplash.com/photo-1658489958427-325ded050829",
+    logo: spotifyLogo,
     logoAlt: "Spotify logo with green circle and sound waves on black background representing music streaming",
     privacyScore: 48,
     complianceStatus: "warning",
