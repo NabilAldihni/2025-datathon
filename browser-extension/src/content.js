@@ -88,6 +88,44 @@ function startDetection() {
 startDetection();
 
 // ----------------------
+// Automatically reject cookie banners
+// ----------------------
+function autoRejectCookies() {
+  // Common cookie banner selectors
+  const selectors = [
+    "[id*='cookie']",
+    "[class*='cookie']",
+    "[id*='consent']",
+    "[class*='consent']",
+    "[id*='gdpr']",
+    "[class*='gdpr']"
+  ];
+
+  const rejectKeywords = ["reject", "deny", "decline", "manage preferences"];
+
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      if (!el.offsetHeight || !el.offsetWidth) return; // skip hidden
+
+      // Find buttons or links to reject
+      const buttons = el.querySelectorAll("button, a");
+      const rejectButton = Array.from(buttons).find(btn =>
+        rejectKeywords.some(k => (btn.innerText || "").toLowerCase().includes(k))
+      );
+
+      if (rejectButton) {
+        rejectButton.click();
+        console.log("Cookie banner rejected automatically");
+      }
+    });
+  });
+}
+
+// Run cookie rejection every 2 seconds (handles dynamic SPA content)
+setInterval(autoRejectCookies, 2000);
+
+
+// ----------------------
 // Stop detection interval
 // ----------------------
 function stopDetection() {
