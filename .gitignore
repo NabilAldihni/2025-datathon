@@ -1,1 +1,4 @@
 data/*
+credentials.json
+services.json
+token.json
