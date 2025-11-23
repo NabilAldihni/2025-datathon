@@ -1,12 +1,14 @@
 import os
+from fastapi import APIRouter, Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import BatchHttpRequest
-
 from app.util import extract_sender_domain, root_domain, strip_tld
+router = APIRouter()
 
 
-def get_service():
+def get_service(request):
+    db = request.app.state.db
     doc = db.tokens.find_one({"name": "gmail"})
     if not doc:
         raise Exception("Gmail OAuth not completed")
@@ -73,8 +75,8 @@ def fetch_domains_in_batches(service, ids):
     return domains
 
 
-def run_discovery():
-    service = get_service()
+def run_discovery(request):
+    service = get_service(request)
 
     queries = [
         'subject:("welcome" OR "account" OR "confirm" OR "verify")',
@@ -88,4 +90,9 @@ def run_discovery():
 
     cleaned = sorted({strip_tld(d) for d in domains})
     return cleaned
+
+
+@router.post("/start-discovery")
+async def start_discovery(request: Request):
+    return run_discovery(request)
 

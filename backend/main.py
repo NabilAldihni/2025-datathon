@@ -77,7 +77,7 @@ app.add_middleware(
 
 # Register all routers
 app.include_router(oauth_router)   # /auth/google/login + /auth/google/callback
-app.include_router(jobs_router)    # /api/discovery/start + /api/discovery/status
+app.include_router(gmail_router)    # /api/discovery/start
 
 
 @app.get("/", summary="Welcome")
