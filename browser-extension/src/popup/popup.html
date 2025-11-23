@@ -1,50 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="popup.css">
+  <meta charset="UTF-8">
+  <title>User Data Summary</title>
+  <style>
+    body { font-family: Arial, sans-serif; min-width: 300px; padding: 10px; }
+    h2 { font-size: 16px; margin: 8px 0 4px 0; }
+    ul { padding-left: 20px; margin: 0 0 10px 0; }
+    li { margin-bottom: 4px; }
+    button { background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+  </style>
 </head>
 <body>
-  <div id="container">
+  <h2>Privacy / TOS Agreements</h2>
+  <ul id="policiesList"><li>Loading...</li></ul>
 
-    <div id="header">
-      <img id="logo" src="../../assets/icon.png" alt="logo">
-      <div>
-        <h1>TOS Guardian</h1>
-        <p class="subtitle">Smart Privacy & TOS Assistant</p>
-      </div>
-    </div>
+  <h2>Cookie Agreements</h2>
+  <ul id="cookiesList"><li>Loading...</li></ul>
 
-    <hr>
-
-    <section class="section">
-      <h2>Cookie Handling</h2>
-      <div class="setting-row">
-        <span>Silent Auto-Reject</span>
-        <label class="switch">
-          <input type="checkbox" id="cookieToggle">
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <p class="setting-desc">
-        When enabled, cookie banners are rejected silently without showing a popup.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Actions</h2>
-      <button id="testModalBtn">Show Test Modal</button>
-    </section>
-
-    <section class="section">
-      <h2>Status</h2>
-      <div id="statusBox">
-        <p><strong>Extension:</strong> Active</p>
-        <p id="lastSummary"><strong>Last Summary:</strong> None yet</p>
-      </div>
-    </section>
-
-  </div>
-
+  <button id="refreshBtn">Refresh Summary</button>
   <script src="popup.js"></script>
 </body>
 </html>

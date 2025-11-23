@@ -1,32 +1,49 @@
-// Load user settings
-document.addEventListener("DOMContentLoaded", async () => {
-    const { cookieBehavior } = await chrome.storage.sync.get("cookieBehavior");
-    const toggle = document.getElementById("cookieToggle");
+function updateSummary() {
+    const policiesList = document.getElementById("policiesList");
+    const cookiesList = document.getElementById("cookiesList");
+    policiesList.innerHTML = "<li>Loading...</li>";
+    cookiesList.innerHTML = "<li>Loading...</li>";
   
-    toggle.checked = cookieBehavior === "silent";
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      const activeTab = tabs[0];
   
-    toggle.addEventListener("change", () => {
-      chrome.storage.sync.set({
-        cookieBehavior: toggle.checked ? "silent" : "notify"
+      // Policies
+      chrome.scripting.executeScript({
+        target: { tabId: activeTab.id },
+        func: () => window.tosGuardianAgreements || []
+      }, results => {
+        const agreements = results?.[0]?.result || [];
+        if (agreements.length === 0) policiesList.innerHTML = "<li>No policies agreed to yet.</li>";
+        else {
+          policiesList.innerHTML = "";
+          agreements.forEach(a => {
+            const li = document.createElement("li");
+            li.innerText = a;
+            policiesList.appendChild(li);
+          });
+        }
+      });
+  
+      // Cookies
+      chrome.scripting.executeScript({
+        target: { tabId: activeTab.id },
+        func: () => window.tosGuardianCookies || []
+      }, results => {
+        const cookies = results?.[0]?.result || [];
+        if (cookies.length === 0) cookiesList.innerHTML = "<li>No cookies detected yet.</li>";
+        else {
+          cookiesList.innerHTML = "";
+          cookies.forEach(c => {
+            const li = document.createElement("li");
+            li.innerText = `${c.name}: ${c.status}`; // rejected or essential
+            cookiesList.appendChild(li);
+          });
+        }
       });
     });
+  }
   
-    // Test modal trigger
-    document.getElementById("testModalBtn").addEventListener("click", () => {
-      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          type: "SHOW_SUMMARY",
-          summary: "This is a test modal message from the popup!"
-        });
-      });
-    });
-  });
-  
-  // Receive summary info from background
-  chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.type === "SUMMARY_LOG") {
-      document.getElementById("lastSummary").innerHTML =
-        `<strong>Last Summary:</strong> ${new Date().toLocaleTimeString()}`;
-    }
-  });
+  // Refresh button
+  document.getElementById("refreshBtn").addEventListener("click", updateSummary);
+  updateSummary();
   

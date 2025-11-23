@@ -1,15 +1,18 @@
 /****************************************************
- * content.js — Trigger mock summary only for:
- * - Visible actionable button near policy text
- * OR
- * - Text containing "agree"/"agreement" near policy keywords
+ * content.js — Full integrated version
  ****************************************************/
+
+// ----------------------
+// Global arrays
+// ----------------------
+window.tosGuardianAgreements = [];
+window.tosGuardianCookies = [];
 
 let policyAlreadySummarized = false;
 let policyInterval = null;
 
 // ----------------------
-// Check if element is visible
+// Helper functions
 // ----------------------
 function isVisible(el) {
   const rect = el.getBoundingClientRect();
@@ -17,21 +20,14 @@ function isVisible(el) {
          rect.bottom > 0 && rect.right > 0;
 }
 
-// ----------------------
-// Determine if text contains policy keywords and agreement keywords nearby
-// ----------------------
 function textIndicatesAgreement(el) {
   const text = (el.innerText || "").toLowerCase();
   const policyKeywords = ["privacy policy", "terms of service", "terms and conditions"];
   const agreementKeywords = ["agree", "agreement"];
-  
   return policyKeywords.some(pk => text.includes(pk)) &&
          agreementKeywords.some(ak => text.includes(ak));
 }
 
-// ----------------------
-// Determine if element is an actionable consent banner
-// ----------------------
 function isConsentNearPolicyText(el) {
   if (!isVisible(el)) return false;
 
@@ -42,14 +38,20 @@ function isConsentNearPolicyText(el) {
     actionableButtonKeywords.some(k => (btn.innerText || "").toLowerCase().includes(k))
   );
 
-  // Trigger if either:
-  // 1. Visible button exists with keyword
-  // 2. Text itself contains "agree"/"agreement" near policy keywords
   return hasActionableButton || textIndicatesAgreement(el);
 }
 
 // ----------------------
-// Detect actionable policy modals
+// Log policy agreement
+// ----------------------
+function logPolicyAgreement(policyName) {
+  if (!window.tosGuardianAgreements.includes(policyName)) {
+    window.tosGuardianAgreements.push(policyName);
+  }
+}
+
+// ----------------------
+// Detect and show mock policy modal
 // ----------------------
 function detectPolicyModal() {
   if (policyAlreadySummarized) return;
@@ -60,9 +62,17 @@ function detectPolicyModal() {
     if (isConsentNearPolicyText(el)) {
       policyAlreadySummarized = true;
 
+      // Determine policy name for logging
+      const text = (el.innerText || "").toLowerCase();
+      let policyName = "Policy";
+      if (text.includes("privacy")) policyName = "Privacy Policy";
+      else if (text.includes("terms of service")) policyName = "Terms of Service";
+      else if (text.includes("terms and conditions")) policyName = "Terms & Conditions";
+
+      logPolicyAgreement(policyName);
       showModal("Policy Summary", "mock policy summary");
 
-      // Optionally log to backend
+      // Optional logging to backend
       try {
         chrome.runtime.sendMessage({
           type: "POLICY_FOUND",
@@ -78,36 +88,26 @@ function detectPolicyModal() {
 }
 
 // ----------------------
-// Start detection interval
+// Cookie logging
 // ----------------------
-function startDetection() {
-  if (policyInterval) return;
-  policyInterval = setInterval(detectPolicyModal, 2000);
+function logCookie(name, status) {
+  const existing = window.tosGuardianCookies.find(c => c.name === name);
+  if (existing) {
+    existing.status = status;
+  } else {
+    window.tosGuardianCookies.push({ name, status });
+  }
 }
 
-startDetection();
-
-// ----------------------
-// Automatically reject cookie banners
-// ----------------------
+// Auto-reject cookie banners
 function autoRejectCookies() {
-  // Common cookie banner selectors
-  const selectors = [
-    "[id*='cookie']",
-    "[class*='cookie']",
-    "[id*='consent']",
-    "[class*='consent']",
-    "[id*='gdpr']",
-    "[class*='gdpr']"
-  ];
-
-  const rejectKeywords = ["reject", "deny", "decline", "manage preferences"];
+  const selectors = ["[id*='cookie']", "[class*='cookie']", "[id*='consent']", "[class*='consent']"];
+  const rejectKeywords = ["reject", "deny", "decline"];
 
   selectors.forEach(sel => {
     document.querySelectorAll(sel).forEach(el => {
-      if (!el.offsetHeight || !el.offsetWidth) return; // skip hidden
+      if (!isVisible(el)) return;
 
-      // Find buttons or links to reject
       const buttons = el.querySelectorAll("button, a");
       const rejectButton = Array.from(buttons).find(btn =>
         rejectKeywords.some(k => (btn.innerText || "").toLowerCase().includes(k))
@@ -115,34 +115,52 @@ function autoRejectCookies() {
 
       if (rejectButton) {
         rejectButton.click();
-        console.log("Cookie banner rejected automatically");
+
+        // Log rejected cookies after a short delay
+        setTimeout(() => {
+          document.cookie.split(";").forEach(c => {
+            const name = c.split("=")[0].trim();
+            logCookie(name, "rejected");
+          });
+        }, 500);
       }
     });
   });
 }
 
-// Run cookie rejection every 2 seconds (handles dynamic SPA content)
-setInterval(autoRejectCookies, 2000);
-
+// Detect essential cookies
+function logEssentialCookies() {
+  document.cookie.split(";").forEach(c => {
+    const name = c.split("=")[0].trim();
+    if (!window.tosGuardianCookies.find(e => e.name === name)) {
+      logCookie(name, "essential");
+    }
+  });
+}
 
 // ----------------------
-// Stop detection interval
+// Detection intervals
 // ----------------------
+function startDetection() {
+  if (policyInterval) return;
+  policyInterval = setInterval(() => {
+    detectPolicyModal();
+    autoRejectCookies();
+    logEssentialCookies();
+  }, 2000);
+}
+
 function stopDetection() {
   if (policyInterval) clearInterval(policyInterval);
   policyInterval = null;
 }
 
-// ----------------------
-// SPA navigation support
-// ----------------------
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    stopDetection();
-  } else {
-    startDetection();
-  }
+  if (document.visibilityState === "hidden") stopDetection();
+  else startDetection();
 });
+
+startDetection();
 
 // ----------------------
 // Modal UI
