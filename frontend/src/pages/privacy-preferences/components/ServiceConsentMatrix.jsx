@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
-
+//no longer used
 const ServiceConsentMatrix = ({ 
   services, 
   onConsentChange,
@@ -70,11 +70,7 @@ const ServiceConsentMatrix = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-semibold">Service Consent Matrix</h2>
-          <p className="text-sm text-muted-foreground">Manage data sharing permissions per service</p>
-        </div>
+      <div className="flex items-center justify-end mb-6">
         {selectedServices?.length > 0 && (
           <Button
             variant="default"
