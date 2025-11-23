@@ -8,6 +8,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from googleapiclient.http import BatchHttpRequest
 
 GENERIC_SENDERS = {
     "amazonses.com",
@@ -55,6 +56,12 @@ def extract_sender_domain(headers):
             return match.group(1).lower() if match else None
     return None
 
+def strip_tld(domain):
+    parts = domain.split(".")
+    if len(parts) >= 2:
+        return ".".join(parts[:-1])    # remove final TLD
+    return domain
+
 def normalize_domain(domain):
     # strip subdomains
     parts = domain.split(".")
@@ -62,7 +69,8 @@ def normalize_domain(domain):
         domain = ".".join(parts[-2:])
     if domain in GENERIC_SENDERS:
         return None
-    return domain
+
+    return strip_tld(domain)
 
 
 def main():
@@ -71,7 +79,7 @@ def main():
     # Queries catching most signup emails
     queries = [
         'subject:("welcome" OR "account" OR "confirm" OR "verify")',
-        # '"unsubscribe"',
+        '"unsubscribe"',
         # 'newer_than:2y'
     ]
 
@@ -85,13 +93,36 @@ def main():
     domains = set()
 
     print("Getting all email companies")
-    for msg_id in all_ids:
-        msg = service.users().messages().get(userId="me", id=msg_id, format="metadata", metadataHeaders=["From"]).execute()
-        raw = extract_sender_domain(msg.get("payload", {}).get("headers", []))
+    batch_size = 100
+    ids_list = list(all_ids)
+
+    def callback(request_id, response, exception):
+        if exception is not None:
+            return
+        raw = extract_sender_domain(
+            response.get("payload", {}).get("headers", [])
+        )
         if raw:
             domain = normalize_domain(raw)
             if domain:
                 domains.add(domain)
+
+    print("Fetching metadata in batches…")
+
+    for i in range(0, len(ids_list), batch_size):
+        batch = service.new_batch_http_request(callback=callback)
+        for msg_id in ids_list[i : i + batch_size]:
+            batch.add(
+                service.users()
+                .messages()
+                .get(
+                    userId="me",
+                    id=msg_id,
+                    format="metadata",
+                    metadataHeaders=["From"],
+                )
+            )
+        batch.execute()
     print("Done")
 
     print("Finished normalising")
