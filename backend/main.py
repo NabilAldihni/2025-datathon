@@ -1,18 +1,24 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
+from app.db import init_db
+from app.oauth import router as oauth_router
+from app.jobs import router as jobs_router
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup
-    print("Starting 2025 Datathon API...")
+    print("Starting API...")
+    init_db()
     yield
-    # shutdown
-    print("Shutting down 2025 Datathon API...")
+    print("Shutting down API...")
 
-app = FastAPI(title="Aegis Internal API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(
+    title="Aegis Internal API",
+    version="0.1.0",
+    lifespan=lifespan
+)
 
-# Simple CORS for local development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,6 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/", summary="Welcome")
+# Routers
+app.include_router(oauth_router, prefix="/gmail")
+app.include_router(jobs_router)
+
+@app.get("/")
 async def root():
-    return {"message": "Hello from backend! Visit /docs for the OpenAPI UI."}
+    return {"message": "API Online"}
+

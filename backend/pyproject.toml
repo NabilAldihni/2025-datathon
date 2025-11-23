@@ -6,4 +6,10 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.121.3",
+    "fastapi",
+    "uvicorn",
+    "pymongo",
+    "google-auth",
+    "google-auth-oauthlib",
+    "google-api-python-client",
 ]
